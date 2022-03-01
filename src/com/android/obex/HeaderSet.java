@@ -31,7 +31,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package javax.obex;
+package com.android.obex;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -39,7 +39,7 @@ import java.security.SecureRandom;
 import java.util.Calendar;
 
 /**
- * This class implements the javax.obex.HeaderSet interface for OBEX over
+ * This class implements the com.android.obex.HeaderSet interface for OBEX over
  * RFCOMM or OBEX over l2cap.
  */
 public final class HeaderSet {

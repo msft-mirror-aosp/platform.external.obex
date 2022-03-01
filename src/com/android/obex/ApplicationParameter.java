@@ -30,7 +30,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package javax.obex;
+package com.android.obex;
 
 /**
  * Represents an Application Parameter header for OBEX as defined by the IrDA specification.
