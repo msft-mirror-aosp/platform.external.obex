@@ -30,7 +30,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package javax.obex;
+package com.android.obex;
 
 /**
  * The <code>ServerRequestHandler</code> class defines an event listener that
