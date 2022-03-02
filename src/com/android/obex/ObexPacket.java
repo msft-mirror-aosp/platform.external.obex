@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package javax.obex;
+package com.android.obex;
 
 import java.io.IOException;
 import java.io.InputStream;

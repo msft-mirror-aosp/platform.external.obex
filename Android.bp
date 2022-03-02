@@ -30,7 +30,7 @@ license {
 }
 
 java_library {
-  name: "obex",
+  name: "com.android.obex",
 
   srcs: ["**/*.java"],
   apex_available: [
