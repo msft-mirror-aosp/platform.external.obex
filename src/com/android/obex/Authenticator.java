@@ -30,7 +30,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package javax.obex;
+package com.android.obex;
 
 /**
  * This interface provides a way to respond to authentication challenge and
