@@ -32,7 +32,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package javax.obex;
+package com.android.obex;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
