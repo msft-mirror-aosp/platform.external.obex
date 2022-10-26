@@ -729,7 +729,7 @@ public final class HeaderSet {
 
     @Override
     public String toString() {
-        return "HeaderSet " + this + ": NAME=" + mName;
+        return "HeaderSet " + System.identityHashCode(this) + ": NAME=" + mName;
     }
 
     public String dump() {
