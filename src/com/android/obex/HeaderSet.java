@@ -507,7 +507,7 @@ public final class HeaderSet {
                     mIntegerUserDefined[headerID - 0xF0] = (Long)headerValue;
                     break;
                 }
-                throw new IllegalArgumentException("Invalid Header Identifier");
+                throw new IllegalArgumentException("Invalid Header Identifier: " + headerID);
         }
     }
 
@@ -573,7 +573,7 @@ public final class HeaderSet {
                 if ((headerID >= 0xF0) && (headerID <= 0xFF)) {
                     return mIntegerUserDefined[headerID - 0xF0];
                 }
-                throw new IllegalArgumentException("Invalid Header Identifier");
+                throw new IllegalArgumentException("Invalid Header Identifier: " + headerID);
         }
     }
 
