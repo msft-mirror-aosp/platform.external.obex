@@ -211,11 +211,22 @@ public final class ObexHelper {
                         length = ((0xFF & headerArray[index]) << 8) +
                                  (0xFF & headerArray[index + 1]);
                         index += 2;
-                        if (length <= OBEX_BYTE_SEQ_HEADER_LEN ||
-                                length - OBEX_BYTE_SEQ_HEADER_LEN > headerArray.length - index) {
+
+                        // An empty Name header
+                        if (headerID == HeaderSet.NAME && length == OBEX_BYTE_SEQ_HEADER_LEN) {
+                            headerImpl.setEmptyNameHeader();
+                            continue;
+                        }
+
+                        if (length <= OBEX_BYTE_SEQ_HEADER_LEN) {
                             Log.e(TAG, "Remote sent an OBEX packet with " +
                                     "incorrect header length = " + length);
                             break;
+                        }
+                        if (length - OBEX_BYTE_SEQ_HEADER_LEN > headerArray.length - index) {
+                            Log.e(TAG, "Remote sent an OBEX packet with " +
+                                    "incorrect header length = " + length);
+                            throw new IOException("Incorrect header length");
                         }
                         length -= OBEX_BYTE_SEQ_HEADER_LEN;
                         value = new byte[length];
