@@ -33,9 +33,7 @@ java_library {
   name: "com.android.obex",
 
   srcs: ["**/*.java"],
-  apex_available: [
-        "com.android.btservices",
-  ],
+  apex_available: ["com.android.bt"],
   sdk_version: "module_current",
   min_sdk_version: "Tiramisu",
 }
