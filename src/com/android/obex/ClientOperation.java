@@ -46,39 +46,22 @@ import java.io.OutputStream;
  * gets.
  */
 public final class ClientOperation implements Operation, BaseStream {
-
     private static final String TAG = "ClientOperation";
 
-    private static final boolean V = ObexHelper.VDBG;
-
     private ClientSession mParent;
-
     private boolean mInputOpen;
-
     private PrivateInputStream mPrivateInput;
-
     private boolean mPrivateInputOpen;
-
     private PrivateOutputStream mPrivateOutput;
-
     private boolean mPrivateOutputOpen;
-
     private String mExceptionMessage;
-
     private int mMaxPacketSize;
-
     private boolean mOperationDone;
-
     private boolean mGetOperation;
-
     private boolean mGetFinalFlag;
-
     private HeaderSet mRequestHeader;
-
     private HeaderSet mReplyHeader;
-
     private boolean mEndOfBodySent;
-
     private boolean mSendBodyHeader = true;
     // A latch - when triggered, there is not way back ;-)
     private boolean mSrmActive = false;
@@ -560,12 +543,11 @@ public final class ClientOperation implements Operation, BaseStream {
                 && srmMode == ObexHelper.OBEX_SRM_ENABLE) {
             mSrmEnabled = true;
         }
-        /**
-         * Call this only when a complete obex packet have been received. (This is not optimal, but
-         * the current design is not really suited to the way SRM is specified.) The BT usage of SRM
-         * is not really safe - it assumes that the SRMP will fit into every OBEX packet, hence if
-         * another header occupies the entire packet, the scheme will not work - unlikely though.
-         */
+
+        // Call this only when a complete obex packet have been received. (This is not optimal, but
+        // the current design is not really suited to the way SRM is specified.) The BT usage of SRM
+        // is not really safe - it assumes that the SRMP will fit into every OBEX packet, hence if
+        // another header occupies the entire packet, the scheme will not work - unlikely though.
         if (mSrmEnabled) {
             mSrmWaitingForRemote = false;
             Byte srmp = (Byte) mReplyHeader.getHeader(HeaderSet.SINGLE_RESPONSE_MODE_PARAMETER);

@@ -254,7 +254,6 @@ public final class ServerOperation implements Operation, BaseStream {
      * @param packet the received obex packet
      * @return false for failing authentication - and a OBEX_HTTP_UNAUTHORIZED response have been
      *     send. Else true.
-     * @throws IOException
      */
     private boolean handleObexPacket(ObexPacket packet) throws IOException {
         byte[] body = updateRequestHeaders(packet);
@@ -302,9 +301,8 @@ public final class ServerOperation implements Operation, BaseStream {
     /**
      * Update the request header set, and sniff on SRM headers to update local state.
      *
-     * @param data the OBEX packet data
+     * @param packet the OBEX packet data
      * @return any bytes in a body/end-of-body header returned by {@link ObexHelper.updateHeaderSet}
-     * @throws IOException
      */
     private byte[] updateRequestHeaders(ObexPacket packet) throws IOException {
         byte[] body = null;

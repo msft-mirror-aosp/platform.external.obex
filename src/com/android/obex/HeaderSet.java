@@ -681,7 +681,6 @@ public final class HeaderSet {
      *     , no user ID is required
      * @param access if <code>true</code> then full access will be granted if successful; if <code>
      *     false</code> then read-only access will be granted if successful
-     * @throws IOException
      * @hide
      */
     public void createAuthenticationChallenge(String realm, boolean userID, boolean access)

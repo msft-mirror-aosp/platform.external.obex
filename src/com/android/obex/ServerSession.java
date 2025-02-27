@@ -730,7 +730,7 @@ public final class ServerSession extends ObexSession implements Runnable {
      * @return the valid response code or <code>OBEX_HTTP_INTERNAL_ERROR</code> if <code>code</code>
      *     is not valid
      */
-    private int validateResponseCode(int code) {
+    private static int validateResponseCode(int code) {
 
         if ((code >= ResponseCodes.OBEX_HTTP_OK) && (code <= ResponseCodes.OBEX_HTTP_PARTIAL)) {
             return code;

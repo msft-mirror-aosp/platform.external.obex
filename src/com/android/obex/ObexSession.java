@@ -35,6 +35,7 @@ package com.android.obex;
 import android.util.Log;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * The <code>ObexSession</code> interface characterizes the term "OBEX Connection" as defined in the
@@ -61,7 +62,6 @@ public class ObexSession {
      * @param header the header with the authentication challenge
      * @return <code>true</code> if the last request should be resent; <code>false</code> if the
      *     last request should not be resent
-     * @throws IOException
      */
     public boolean handleAuthChall(HeaderSet header) throws IOException {
         if (mAuthenticator == null) {
@@ -91,12 +91,7 @@ public class ObexSession {
                 // ASCII encoding
                 // Fall through
                 case ObexHelper.OBEX_AUTH_REALM_CHARSET_ISO_8859_1:
-                    // ISO-8859-1 encoding
-                    try {
-                        realm = new String(realmString, "ISO8859_1");
-                    } catch (Exception e) {
-                        throw new IOException("Unsupported Encoding Scheme");
-                    }
+                    realm = new String(realmString, StandardCharsets.ISO_8859_1);
                     break;
 
                 case ObexHelper.OBEX_AUTH_REALM_CHARSET_UNICODE:
