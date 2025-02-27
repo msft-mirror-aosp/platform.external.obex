@@ -514,11 +514,8 @@ public final class HeaderSet {
      *     specified is not part of this <code>HeaderSet</code> object
      * @throws IllegalArgumentException if the <code>headerID</code> is not one defined in this
      *     interface or any of the user-defined headers
-     * @throws IOException if an error occurred in the transport layer during the operation or if
-     *     the connection has been closed
      */
-    public Object getHeader(int headerID) throws IOException {
-
+    public Object getHeader(int headerID) {
         switch (headerID) {
             case COUNT:
                 return mCount;
