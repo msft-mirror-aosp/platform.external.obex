@@ -333,20 +333,13 @@ public final class ServerOperation implements Operation, BaseStream {
                 && (headerId == ObexHelper.OBEX_OPCODE_GET
                         || headerId == ObexHelper.OBEX_OPCODE_GET_FINAL
                         || headerId == ObexHelper.OBEX_OPCODE_PUT)) {
-            try {
-                mSrmWaitingForRemote = false;
-                Byte srmp =
-                        (Byte) requestHeader.getHeader(HeaderSet.SINGLE_RESPONSE_MODE_PARAMETER);
-                if (srmp != null && srmp == ObexHelper.OBEX_SRMP_WAIT) {
-                    mSrmWaitingForRemote = true;
-                    // Clear the wait header, as the absents of the header when the final bit is set
-                    // indicates don't wait.
-                    requestHeader.setHeader(HeaderSet.SINGLE_RESPONSE_MODE_PARAMETER, null);
-                }
-            } catch (IOException e) {
-                if (V) {
-                    Log.w(TAG, "Exception while extracting header", e);
-                }
+            mSrmWaitingForRemote = false;
+            Byte srmp = (Byte) requestHeader.getHeader(HeaderSet.SINGLE_RESPONSE_MODE_PARAMETER);
+            if (srmp != null && srmp == ObexHelper.OBEX_SRMP_WAIT) {
+                mSrmWaitingForRemote = true;
+                // Clear the wait header, as the absents of the header when the final bit is set
+                // indicates don't wait.
+                requestHeader.setHeader(HeaderSet.SINGLE_RESPONSE_MODE_PARAMETER, null);
             }
         }
     }
