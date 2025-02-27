@@ -32,9 +32,7 @@
 
 package com.android.obex;
 
-/**
- * This class holds user name and password combinations.
- */
+/** This class holds user name and password combinations. */
 public final class PasswordAuthentication {
 
     private byte[] mUserName;
@@ -42,12 +40,11 @@ public final class PasswordAuthentication {
     private final byte[] mPassword;
 
     /**
-     * Creates a new <code>PasswordAuthentication</code> with the user name and
-     * password provided.
+     * Creates a new <code>PasswordAuthentication</code> with the user name and password provided.
+     *
      * @param userName the user name to include; this may be <code>null</code>
      * @param password the password to include in the response
-     * @throws NullPointerException if <code>password</code> is
-     *         <code>null</code>
+     * @throws NullPointerException if <code>password</code> is <code>null</code>
      */
     public PasswordAuthentication(final byte[] userName, final byte[] password) {
         if (userName != null) {
@@ -60,10 +57,10 @@ public final class PasswordAuthentication {
     }
 
     /**
-     * Retrieves the user name that was specified in the constructor. The user
-     * name may be <code>null</code>.
-     * @return the user name
+     * Retrieves the user name that was specified in the constructor. The user name may be <code>
+     * null</code>.
      *
+     * @return the user name
      * @hide
      */
     public byte[] getUserName() {
@@ -72,8 +69,8 @@ public final class PasswordAuthentication {
 
     /**
      * Retrieves the password.
-     * @return the password
      *
+     * @return the password
      * @hide
      */
     public byte[] getPassword() {

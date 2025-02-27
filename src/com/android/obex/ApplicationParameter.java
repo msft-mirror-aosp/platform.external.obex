@@ -32,9 +32,7 @@
 
 package com.android.obex;
 
-/**
- * Represents an Application Parameter header for OBEX as defined by the IrDA specification.
- */
+/** Represents an Application Parameter header for OBEX as defined by the IrDA specification. */
 public final class ApplicationParameter {
 
     private byte[] mArray;
@@ -43,9 +41,7 @@ public final class ApplicationParameter {
 
     private int mMaxLength = 1000;
 
-    /**
-     * Possible values for the tag field in the Application Parameter header.
-     */
+    /** Possible values for the tag field in the Application Parameter header. */
     public static class TRIPLET_TAGID {
         public static final byte ORDER_TAGID = 0x01;
 
@@ -83,9 +79,7 @@ public final class ApplicationParameter {
         public static final byte RESET_NEW_MISSED_CALLS_TAGID = 0x0F;
     }
 
-    /**
-     * Possible values for the value field in the Application Parameter header.
-     */
+    /** Possible values for the value field in the Application Parameter header. */
     public static class TRIPLET_VALUE {
         public static class ORDER {
             public static final byte ORDER_BY_INDEX = 0x00;
@@ -110,9 +104,7 @@ public final class ApplicationParameter {
         }
     }
 
-    /**
-     * Possible values for the length field in the Application Parameter header.
-     */
+    /** Possible values for the length field in the Application Parameter header. */
     public static class TRIPLET_LENGTH {
         public static final byte ORDER_LENGTH = 1;
 
@@ -145,17 +137,15 @@ public final class ApplicationParameter {
         public static final byte RESETNEWMISSEDCALLS_LENGTH = 1;
     }
 
-    /**
-     * Constructs an ApplicationParameter header
-     */
+    /** Constructs an ApplicationParameter header */
     public ApplicationParameter() {
         mArray = new byte[mMaxLength];
         mLength = 0;
     }
 
     /**
-     * Adds a triplet of tag, length, and value to this application parameter header as per the
-     * IrDA specifications.
+     * Adds a triplet of tag, length, and value to this application parameter header as per the IrDA
+     * specifications.
      *
      * @param tag one of {@link TRIPLET_TAGID}
      * @param len one of {@link TRIPLET_LENGTH}

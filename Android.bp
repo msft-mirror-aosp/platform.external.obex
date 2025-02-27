@@ -1,6 +1,6 @@
 // OBEX library
 package {
-  default_applicable_licenses: ["obex_license"],
+    default_applicable_licenses: ["obex_license"],
 }
 
 // Added automatically by a large-scale-change that took the approach of
@@ -18,22 +18,22 @@ package {
 // used in the current project.
 // See: http://go/android-license-faq
 license {
-  name: "obex_license",
-  visibility: [":__subpackages__"],
-  license_kinds: [
-    "SPDX-license-identifier-Apache-2.0",
-    "SPDX-license-identifier-BSD",
-  ],
-  license_text: [
-    "LICENSE",
-  ],
+    name: "obex_license",
+    visibility: [":__subpackages__"],
+    license_kinds: [
+        "SPDX-license-identifier-Apache-2.0",
+        "SPDX-license-identifier-BSD",
+    ],
+    license_text: [
+        "LICENSE",
+    ],
 }
 
 java_library {
-  name: "com.android.obex",
+    name: "com.android.obex",
 
-  srcs: ["**/*.java"],
-  apex_available: ["com.android.bt"],
-  sdk_version: "module_current",
-  min_sdk_version: "Tiramisu",
+    srcs: ["**/*.java"],
+    apex_available: ["com.android.bt"],
+    sdk_version: "module_current",
+    min_sdk_version: "Tiramisu",
 }
