@@ -349,7 +349,6 @@ public final class ClientSession extends ObexSession {
         ensureOpen();
 
         int totalLength = 2;
-        byte[] head = null;
         HeaderSet headset;
         if (header == null) {
             headset = new HeaderSet();
@@ -373,7 +372,7 @@ public final class ClientSession extends ObexSession {
             System.arraycopy(mConnectionId, 0, headset.mConnectionID, 0, 4);
         }
 
-        head = ObexHelper.createHeader(headset, false);
+        byte[] head = ObexHelper.createHeader(headset, false);
         totalLength += head.length;
 
         if (totalLength > mMaxTxPacketSize) {
