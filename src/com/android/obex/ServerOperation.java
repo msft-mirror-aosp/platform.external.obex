@@ -44,15 +44,14 @@ import java.io.OutputStream;
 
 /**
  * This class implements the Operation interface for server side connections.
- * <P>
- * <STRONG>Request Codes</STRONG> There are four different request codes that
- * are in this class. 0x02 is a PUT request that signals that the request is not
- * complete and requires an additional OBEX packet. 0x82 is a PUT request that
- * says that request is complete. In this case, the server can begin sending the
- * response. The 0x03 is a GET request that signals that the request is not
- * finished. When the server receives a 0x83, the client is signaling the server
- * that it is done with its request. TODO: Extend the ClientOperation and reuse
- * the methods defined TODO: in that class.
+ *
+ * <p><STRONG>Request Codes</STRONG> There are four different request codes that are in this class.
+ * 0x02 is a PUT request that signals that the request is not complete and requires an additional
+ * OBEX packet. 0x82 is a PUT request that says that request is complete. In this case, the server
+ * can begin sending the response. The 0x03 is a GET request that signals that the request is not
+ * finished. When the server receives a 0x83, the client is signaling the server that it is done
+ * with its request. TODO: Extend the ClientOperation and reuse the methods defined TODO: in that
+ * class.
  */
 public final class ServerOperation implements Operation, BaseStream {
 
@@ -116,17 +115,18 @@ public final class ServerOperation implements Operation, BaseStream {
 
     /**
      * Creates new ServerOperation
+     *
      * @param p the parent that created this object
      * @param in the input stream to read from
      * @param request the initial request that was received from the client
      * @param maxSize the max packet size that the client will accept
      * @param listen the listener that is responding to the request
      * @throws IOException if an IO error occurs
-     *
      * @hide
      */
-    public ServerOperation(ServerSession p, InputStream in, int request, int maxSize,
-            ServerRequestHandler listen) throws IOException {
+    public ServerOperation(
+            ServerSession p, InputStream in, int request, int maxSize, ServerRequestHandler listen)
+            throws IOException {
 
         mAborted = false;
         mParent = p;
@@ -147,8 +147,8 @@ public final class ServerOperation implements Operation, BaseStream {
         /*
          * Determine if this is a PUT request
          */
-        if ((request == ObexHelper.OBEX_OPCODE_PUT) ||
-                (request == ObexHelper.OBEX_OPCODE_PUT_FINAL)) {
+        if ((request == ObexHelper.OBEX_OPCODE_PUT)
+                || (request == ObexHelper.OBEX_OPCODE_PUT_FINAL)) {
             /*
              * It is a PUT request.
              */
@@ -163,8 +163,8 @@ public final class ServerOperation implements Operation, BaseStream {
                 finalBitSet = true;
                 mRequestFinished = true;
             }
-        } else if ((request == ObexHelper.OBEX_OPCODE_GET) ||
-                (request == ObexHelper.OBEX_OPCODE_GET_FINAL)) {
+        } else if ((request == ObexHelper.OBEX_OPCODE_GET)
+                || (request == ObexHelper.OBEX_OPCODE_GET_FINAL)) {
             /*
              * It is a GET request.
              */
@@ -187,22 +187,30 @@ public final class ServerOperation implements Operation, BaseStream {
          */
         if (packet.mLength > ObexHelper.getMaxRxPacketSize(mTransport)) {
             mParent.sendResponse(ResponseCodes.OBEX_HTTP_REQ_TOO_LARGE, null);
-            throw new IOException("Packet received was too large. Length: "
-                    + packet.mLength + " maxLength: " + ObexHelper.getMaxRxPacketSize(mTransport));
+            throw new IOException(
+                    "Packet received was too large. Length: "
+                            + packet.mLength
+                            + " maxLength: "
+                            + ObexHelper.getMaxRxPacketSize(mTransport));
         }
 
         /*
          * Determine if any headers were sent in the initial request
          */
         if (packet.mLength > 3) {
-            if(!handleObexPacket(packet)) {
+            if (!handleObexPacket(packet)) {
                 return;
             }
             /* Don't Pre-Send continue when Remote requested for SRM
              * Let the Application confirm.
              */
-            if (V) Log.v(TAG, "Get App confirmation if SRM ENABLED case: " + mSrmEnabled
-                    + " not hasBody case: " + mHasBody);
+            if (V)
+                Log.v(
+                        TAG,
+                        "Get App confirmation if SRM ENABLED case: "
+                                + mSrmEnabled
+                                + " not hasBody case: "
+                                + mHasBody);
             if (!mHasBody && !mSrmEnabled) {
                 while ((!mGetOperation) && (!finalBitSet)) {
                     sendReply(ResponseCodes.OBEX_HTTP_CONTINUE);
@@ -213,11 +221,20 @@ public final class ServerOperation implements Operation, BaseStream {
             }
         }
         /* Don't Pre-Send continue when Remote requested for SRM
-          * Let the Application confirm.
-          */
-        if (V) Log.v(TAG, "Get App confirmation if SRM ENABLED case: " + mSrmEnabled
-            + " not finalPacket: " + finalBitSet + " not GETOp Case: " + mGetOperation);
-        while ((!mSrmEnabled) && (!mGetOperation) && (!finalBitSet)
+         * Let the Application confirm.
+         */
+        if (V)
+            Log.v(
+                    TAG,
+                    "Get App confirmation if SRM ENABLED case: "
+                            + mSrmEnabled
+                            + " not finalPacket: "
+                            + finalBitSet
+                            + " not GETOp Case: "
+                            + mGetOperation);
+        while ((!mSrmEnabled)
+                && (!mGetOperation)
+                && (!finalBitSet)
                 && (mPrivateInput.available() == 0)) {
             sendReply(ResponseCodes.OBEX_HTTP_CONTINUE);
             if (mPrivateInput.available() > 0) {
@@ -233,9 +250,10 @@ public final class ServerOperation implements Operation, BaseStream {
 
     /**
      * Parse headers and update member variables
+     *
      * @param packet the received obex packet
-     * @return false for failing authentication - and a OBEX_HTTP_UNAUTHORIZED
-     * response have been send. Else true.
+     * @return false for failing authentication - and a OBEX_HTTP_UNAUTHORIZED response have been
+     *     send. Else true.
      * @throws IOException
      */
     private boolean handleObexPacket(ObexPacket packet) throws IOException {
@@ -245,8 +263,7 @@ public final class ServerOperation implements Operation, BaseStream {
             mHasBody = true;
         }
         if (mListener.getConnectionId() != -1 && requestHeader.mConnectionID != null) {
-            mListener.setConnectionId(ObexHelper
-                    .convertToLong(requestHeader.mConnectionID));
+            mListener.setConnectionId(ObexHelper.convertToLong(requestHeader.mConnectionID));
         } else {
             mListener.setConnectionId(1);
         }
@@ -266,7 +283,11 @@ public final class ServerOperation implements Operation, BaseStream {
             mParent.handleAuthChall(requestHeader);
             // send the auhtResp to the client
             replyHeader.mAuthResp = new byte[requestHeader.mAuthResp.length];
-            System.arraycopy(requestHeader.mAuthResp, 0, replyHeader.mAuthResp, 0,
+            System.arraycopy(
+                    requestHeader.mAuthResp,
+                    0,
+                    replyHeader.mAuthResp,
+                    0,
                     replyHeader.mAuthResp.length);
             requestHeader.mAuthResp = null;
             requestHeader.mAuthChall = null;
@@ -280,6 +301,7 @@ public final class ServerOperation implements Operation, BaseStream {
 
     /**
      * Update the request header set, and sniff on SRM headers to update local state.
+     *
      * @param data the OBEX packet data
      * @return any bytes in a body/end-of-body header returned by {@link ObexHelper.updateHeaderSet}
      * @throws IOException
@@ -289,39 +311,45 @@ public final class ServerOperation implements Operation, BaseStream {
         if (packet.mPayload != null) {
             body = ObexHelper.updateHeaderSet(requestHeader, packet.mPayload);
         }
-        Byte srmMode = (Byte)requestHeader.getHeader(HeaderSet.SINGLE_RESPONSE_MODE);
-        if(mTransport.isSrmSupported() && srmMode != null
+        Byte srmMode = (Byte) requestHeader.getHeader(HeaderSet.SINGLE_RESPONSE_MODE);
+        if (mTransport.isSrmSupported()
+                && srmMode != null
                 && srmMode == ObexHelper.OBEX_SRM_ENABLE) {
             mSrmEnabled = true;
-            if(V) Log.d(TAG,"SRM is now ENABLED (but not active) for this operation");
+            if (V) Log.d(TAG, "SRM is now ENABLED (but not active) for this operation");
         }
         checkForSrmWait(packet.mHeaderId);
-        if((!mSrmWaitingForRemote) && (mSrmEnabled)) {
-            if(V) Log.d(TAG,"SRM is now ACTIVE for this operation");
+        if ((!mSrmWaitingForRemote) && (mSrmEnabled)) {
+            if (V) Log.d(TAG, "SRM is now ACTIVE for this operation");
             mSrmActive = true;
         }
         return body;
     }
 
     /**
-     * Call this only when a complete request have been received.
-     * (This is not optimal, but the current design is not really suited to
-     * the way SRM is specified.)
+     * Call this only when a complete request have been received. (This is not optimal, but the
+     * current design is not really suited to the way SRM is specified.)
      */
-    private void checkForSrmWait(int headerId){
-        if (mSrmEnabled && (headerId == ObexHelper.OBEX_OPCODE_GET
-                || headerId == ObexHelper.OBEX_OPCODE_GET_FINAL
-                || headerId == ObexHelper.OBEX_OPCODE_PUT)) {
+    private void checkForSrmWait(int headerId) {
+        if (mSrmEnabled
+                && (headerId == ObexHelper.OBEX_OPCODE_GET
+                        || headerId == ObexHelper.OBEX_OPCODE_GET_FINAL
+                        || headerId == ObexHelper.OBEX_OPCODE_PUT)) {
             try {
                 mSrmWaitingForRemote = false;
-                Byte srmp = (Byte)requestHeader.getHeader(HeaderSet.SINGLE_RESPONSE_MODE_PARAMETER);
-                if(srmp != null && srmp == ObexHelper.OBEX_SRMP_WAIT) {
+                Byte srmp =
+                        (Byte) requestHeader.getHeader(HeaderSet.SINGLE_RESPONSE_MODE_PARAMETER);
+                if (srmp != null && srmp == ObexHelper.OBEX_SRMP_WAIT) {
                     mSrmWaitingForRemote = true;
                     // Clear the wait header, as the absents of the header when the final bit is set
                     // indicates don't wait.
                     requestHeader.setHeader(HeaderSet.SINGLE_RESPONSE_MODE_PARAMETER, null);
                 }
-            } catch (IOException e) {if(V){Log.w(TAG,"Exception while extracting header",e);}}
+            } catch (IOException e) {
+                if (V) {
+                    Log.w(TAG, "Exception while extracting header", e);
+                }
+            }
         }
     }
 
@@ -331,17 +359,15 @@ public final class ServerOperation implements Operation, BaseStream {
     }
 
     /**
-     * Determines if the operation should continue or should wait. If it should
-     * continue, this method will continue the operation.
-     * @param sendEmpty if <code>true</code> then this will continue the
-     *        operation even if no headers will be sent; if <code>false</code>
-     *        then this method will only continue the operation if there are
-     *        headers to send
-     * @param inStream if<code>true</code> the stream is input stream, otherwise
-     *        output stream
-     * @return <code>true</code> if the operation was completed;
-     *         <code>false</code> if no operation took place
+     * Determines if the operation should continue or should wait. If it should continue, this
+     * method will continue the operation.
      *
+     * @param sendEmpty if <code>true</code> then this will continue the operation even if no
+     *     headers will be sent; if <code>false</code> then this method will only continue the
+     *     operation if there are headers to send
+     * @param inStream if<code>true</code> the stream is input stream, otherwise output stream
+     * @return <code>true</code> if the operation was completed; <code>false</code> if no operation
+     *     took place
      * @hide
      */
     public synchronized boolean continueOperation(boolean sendEmpty, boolean inStream)
@@ -369,15 +395,14 @@ public final class ServerOperation implements Operation, BaseStream {
     }
 
     /**
-     * Sends a reply to the client. If the reply is a OBEX_HTTP_CONTINUE, it
-     * will wait for a response from the client before ending unless SRM is active.
-     * @param type the response code to send back to the client
-     * @return <code>true</code> if the final bit was not set on the reply;
-     *         <code>false</code> if no reply was received because the operation
-     *         ended, an abort was received, the final bit was set in the
-     *         reply or SRM is active.
-     * @throws IOException if an IO error occurs
+     * Sends a reply to the client. If the reply is a OBEX_HTTP_CONTINUE, it will wait for a
+     * response from the client before ending unless SRM is active.
      *
+     * @param type the response code to send back to the client
+     * @return <code>true</code> if the final bit was not set on the reply; <code>false</code> if no
+     *     reply was received because the operation ended, an abort was received, the final bit was
+     *     set in the reply or SRM is active.
+     * @throws IOException if an IO error occurs
      * @hide
      */
     public synchronized boolean sendReply(int type) throws IOException {
@@ -393,16 +418,17 @@ public final class ServerOperation implements Operation, BaseStream {
             replyHeader.mConnectionID = ObexHelper.convertToByteArray(id);
         }
 
-        if(mSrmEnabled && !mSrmResponseSent) {
+        if (mSrmEnabled && !mSrmResponseSent) {
             // As we are not ensured that the SRM enable is in the first OBEX packet
             // We must check for each reply.
-            if(V)Log.v(TAG, "mSrmEnabled==true, sending SRM enable response.");
-            replyHeader.setHeader(HeaderSet.SINGLE_RESPONSE_MODE, (byte)ObexHelper.OBEX_SRM_ENABLE);
+            if (V) Log.v(TAG, "mSrmEnabled==true, sending SRM enable response.");
+            replyHeader.setHeader(
+                    HeaderSet.SINGLE_RESPONSE_MODE, (byte) ObexHelper.OBEX_SRM_ENABLE);
             srmRespSendPending = true;
         }
 
-        if(mSrmEnabled && !mGetOperation && mSrmLocalWait) {
-            replyHeader.setHeader(HeaderSet.SINGLE_RESPONSE_MODE, (byte)ObexHelper.OBEX_SRMP_WAIT);
+        if (mSrmEnabled && !mGetOperation && mSrmLocalWait) {
+            replyHeader.setHeader(HeaderSet.SINGLE_RESPONSE_MODE, (byte) ObexHelper.OBEX_SRMP_WAIT);
         }
 
         byte[] headerArray = ObexHelper.createHeader(replyHeader, true); // This clears the headers
@@ -420,8 +446,11 @@ public final class ServerOperation implements Operation, BaseStream {
             int start = 0;
 
             while (end != headerArray.length) {
-                end = ObexHelper.findHeaderEnd(headerArray, start, mMaxPacketLength
-                        - ObexHelper.BASE_PACKET_LENGTH);
+                end =
+                        ObexHelper.findHeaderEnd(
+                                headerArray,
+                                start,
+                                mMaxPacketLength - ObexHelper.BASE_PACKET_LENGTH);
                 if (end == -1) {
 
                     mClosed = true;
@@ -459,25 +488,33 @@ public final class ServerOperation implements Operation, BaseStream {
             finalBitSet = true;
         }
 
-        if(mSrmActive) {
-            if(!mGetOperation && type == ResponseCodes.OBEX_HTTP_CONTINUE &&
-                    mSrmResponseSent == true) {
+        if (mSrmActive) {
+            if (!mGetOperation
+                    && type == ResponseCodes.OBEX_HTTP_CONTINUE
+                    && mSrmResponseSent == true) {
                 // we are in the middle of a SRM PUT operation, don't send a continue.
                 skipSend = true;
-            } else if(mGetOperation && mRequestFinished == false && mSrmResponseSent == true) {
+            } else if (mGetOperation && mRequestFinished == false && mSrmResponseSent == true) {
                 // We are still receiving the get request, receive, but don't send continue.
                 skipSend = true;
-            } else if(mGetOperation && mRequestFinished == true) {
+            } else if (mGetOperation && mRequestFinished == true) {
                 // All done receiving the GET request, send data to the client, without
                 // expecting a continue.
                 skipReceive = true;
             }
-            if(V)Log.v(TAG, "type==" + type + " skipSend==" + skipSend
-                    + " skipReceive==" + skipReceive);
+            if (V)
+                Log.v(
+                        TAG,
+                        "type=="
+                                + type
+                                + " skipSend=="
+                                + skipSend
+                                + " skipReceive=="
+                                + skipReceive);
         }
-        if(srmRespSendPending) {
-            if(V)Log.v(TAG,
-                    "SRM Enabled (srmRespSendPending == true)- sending SRM Enable response");
+        if (srmRespSendPending) {
+            if (V)
+                Log.v(TAG, "SRM Enabled (srmRespSendPending == true)- sending SRM Enable response");
             mSrmResponseSent = true;
         }
 
@@ -500,43 +537,42 @@ public final class ServerOperation implements Operation, BaseStream {
                  * (End of Body) otherwise, we need to send 0x48 (Body)
                  */
                 if ((finalBitSet) || (mPrivateOutput.isClosed())) {
-                    if(mSendBodyHeader == true) {
+                    if (mSendBodyHeader == true) {
                         out.write(0x49);
                         bodyLength += 3;
-                        out.write((byte)(bodyLength >> 8));
-                        out.write((byte)bodyLength);
+                        out.write((byte) (bodyLength >> 8));
+                        out.write((byte) bodyLength);
                         out.write(body);
                     }
                 } else {
-                    if(mSendBodyHeader == true) {
-                    out.write(0x48);
-                    bodyLength += 3;
-                    out.write((byte)(bodyLength >> 8));
-                    out.write((byte)bodyLength);
-                    out.write(body);
+                    if (mSendBodyHeader == true) {
+                        out.write(0x48);
+                        bodyLength += 3;
+                        out.write((byte) (bodyLength >> 8));
+                        out.write((byte) bodyLength);
+                        out.write(body);
                     }
                 }
-
             }
         }
 
         if ((finalBitSet) && (type == ResponseCodes.OBEX_HTTP_OK) && (originalBodyLength <= 0)) {
-            if(mSendBodyHeader) {
+            if (mSendBodyHeader) {
                 out.write(0x49);
                 originalBodyLength = 3;
-                out.write((byte)(originalBodyLength >> 8));
-                out.write((byte)originalBodyLength);
+                out.write((byte) (originalBodyLength >> 8));
+                out.write((byte) originalBodyLength);
             }
         }
 
-        if(skipSend == false) {
+        if (skipSend == false) {
             mResponseSize = 3;
             mParent.sendResponse(type, out.toByteArray());
         }
 
         if (type == ResponseCodes.OBEX_HTTP_CONTINUE) {
 
-            if(mGetOperation && skipReceive) {
+            if (mGetOperation && skipReceive) {
                 // Here we need to check for and handle abort (throw an exception).
                 // Any other signal received should be discarded silently (only on server side)
                 checkSrmRemoteAbort();
@@ -583,12 +619,11 @@ public final class ServerOperation implements Operation, BaseStream {
                      * Determine if any headers were sent in the initial request
                      */
                     if (packet.mLength > 3 || (mSrmEnabled && packet.mLength == 3)) {
-                        if(handleObexPacket(packet) == false) {
+                        if (handleObexPacket(packet) == false) {
                             return false;
                         }
                     }
                 }
-
             }
             return true;
         } else {
@@ -597,23 +632,21 @@ public final class ServerOperation implements Operation, BaseStream {
     }
 
     /**
-     * This method will look for an abort from the peer during a SRM transfer.
-     * The function will not block if no data has been received from the remote device.
-     * If data have been received, the function will block while reading the incoming
-     * OBEX package.
-     * An Abort request will be handled, and cause an IOException("Abort Received").
-     * Other messages will be discarded silently as per GOEP specification.
-     * @throws IOException if an abort request have been received.
-     * TODO: I think this is an error in the specification. If we discard other messages,
-     *       the peer device will most likely stall, as it will not receive the expected
-     *       response for the message...
-     *       I'm not sure how to understand "Receipt of invalid or unexpected SRM or SRMP
-     *       header values shall be ignored by the receiving device."
-     *       If any signal is received during an active SRM transfer it is unexpected regardless
-     *       whether or not it contains SRM/SRMP headers...
+     * This method will look for an abort from the peer during a SRM transfer. The function will not
+     * block if no data has been received from the remote device. If data have been received, the
+     * function will block while reading the incoming OBEX package. An Abort request will be
+     * handled, and cause an IOException("Abort Received"). Other messages will be discarded
+     * silently as per GOEP specification.
+     *
+     * @throws IOException if an abort request have been received. TODO: I think this is an error in
+     *     the specification. If we discard other messages, the peer device will most likely stall,
+     *     as it will not receive the expected response for the message... I'm not sure how to
+     *     understand "Receipt of invalid or unexpected SRM or SRMP header values shall be ignored
+     *     by the receiving device." If any signal is received during an active SRM transfer it is
+     *     unexpected regardless whether or not it contains SRM/SRMP headers...
      */
     private void checkSrmRemoteAbort() throws IOException {
-        if(mInput.available() > 0) {
+        if (mInput.available() > 0) {
             ObexPacket packet = ObexPacket.read(mInput);
             /*
              * Determine if an ABORT was sent as the reply
@@ -624,8 +657,13 @@ public final class ServerOperation implements Operation, BaseStream {
                 // TODO: should we throw an exception here anyway? - don't see how to
                 //       ignore SRM/SRMP headers without ignoring the complete signal
                 //       (in this particular case).
-                Log.w(TAG, "Received unexpected request from client - discarding...\n"
-                        + "   headerId: " + packet.mHeaderId + " length: " + packet.mLength);
+                Log.w(
+                        TAG,
+                        "Received unexpected request from client - discarding...\n"
+                                + "   headerId: "
+                                + packet.mHeaderId
+                                + " length: "
+                                + packet.mLength);
             }
         }
     }
@@ -644,12 +682,11 @@ public final class ServerOperation implements Operation, BaseStream {
     }
 
     /**
-     * Sends an ABORT message to the server. By calling this method, the
-     * corresponding input and output streams will be closed along with this
-     * object.
-     * @throws IOException if the transaction has already ended or if an OBEX
-     *         server called this method
+     * Sends an ABORT message to the server. By calling this method, the corresponding input and
+     * output streams will be closed along with this object.
      *
+     * @throws IOException if the transaction has already ended or if an OBEX server called this
+     *     method
      * @hide
      */
     public void abort() throws IOException {
@@ -657,12 +694,11 @@ public final class ServerOperation implements Operation, BaseStream {
     }
 
     /**
-     * Returns the headers that have been received during the operation.
-     * Modifying the object returned has no effect on the headers that are sent
-     * or retrieved.
+     * Returns the headers that have been received during the operation. Modifying the object
+     * returned has no effect on the headers that are sent or retrieved.
+     *
      * @return the headers received during this <code>Operation</code>
      * @throws IOException if this <code>Operation</code> has been closed
-     *
      * @hide
      */
     public HeaderSet getReceivedHeader() throws IOException {
@@ -671,14 +707,13 @@ public final class ServerOperation implements Operation, BaseStream {
     }
 
     /**
-     * Specifies the headers that should be sent in the next OBEX message that
-     * is sent.
-     * @param headers the headers to send in the next message
-     * @throws IOException if this <code>Operation</code> has been closed or the
-     *         transaction has ended and no further messages will be exchanged
-     * @throws IllegalArgumentException if <code>headers</code> was not created
-     *         by a call to <code>ServerRequestHandler.createHeaderSet()</code>
+     * Specifies the headers that should be sent in the next OBEX message that is sent.
      *
+     * @param headers the headers to send in the next message
+     * @throws IOException if this <code>Operation</code> has been closed or the transaction has
+     *     ended and no further messages will be exchanged
+     * @throws IllegalArgumentException if <code>headers</code> was not created by a call to <code>
+     *     ServerRequestHandler.createHeaderSet()</code>
      * @hide
      */
     public void sendHeaders(HeaderSet headers) throws IOException {
@@ -693,20 +728,18 @@ public final class ServerOperation implements Operation, BaseStream {
             for (int i = 0; i < headerList.length; i++) {
                 replyHeader.setHeader(headerList[i], headers.getHeader(headerList[i]));
             }
-
         }
     }
 
     /**
-     * Retrieves the response code retrieved from the server. Response codes are
-     * defined in the <code>ResponseCodes</code> interface.
-     * @return the response code retrieved from the server
-     * @throws IOException if an error occurred in the transport layer during
-     *         the transaction; if this method is called on a
-     *         <code>HeaderSet</code> object created by calling
-     *         <code>createHeaderSet</code> in a <code>ClientSession</code>
-     *         object; if this is called from a server
+     * Retrieves the response code retrieved from the server. Response codes are defined in the
+     * <code>ResponseCodes</code> interface.
      *
+     * @return the response code retrieved from the server
+     * @throws IOException if an error occurred in the transport layer during the transaction; if
+     *     this method is called on a <code>HeaderSet</code> object created by calling <code>
+     *     createHeaderSet</code> in a <code>ClientSession</code> object; if this is called from a
+     *     server
      * @hide
      */
     public int getResponseCode() throws IOException {
@@ -734,9 +767,9 @@ public final class ServerOperation implements Operation, BaseStream {
 
     /**
      * Open and return an input stream for a connection.
+     *
      * @return an input stream
      * @throws IOException if an I/O error occurs
-     *
      * @hide
      */
     public InputStream openInputStream() throws IOException {
@@ -746,9 +779,9 @@ public final class ServerOperation implements Operation, BaseStream {
 
     /**
      * Open and return a data input stream for a connection.
+     *
      * @return an input stream
      * @throws IOException if an I/O error occurs
-     *
      * @hide
      */
     public DataInputStream openDataInputStream() throws IOException {
@@ -757,9 +790,9 @@ public final class ServerOperation implements Operation, BaseStream {
 
     /**
      * Open and return an output stream for a connection.
+     *
      * @return an output stream
      * @throws IOException if an I/O error occurs
-     *
      * @hide
      */
     public OutputStream openOutputStream() throws IOException {
@@ -782,9 +815,9 @@ public final class ServerOperation implements Operation, BaseStream {
 
     /**
      * Open and return a data output stream for a connection.
+     *
      * @return an output stream
      * @throws IOException if an I/O error occurs
-     *
      * @hide
      */
     public DataOutputStream openDataOutputStream() throws IOException {
@@ -793,8 +826,8 @@ public final class ServerOperation implements Operation, BaseStream {
 
     /**
      * Closes the connection and ends the transaction
-     * @throws IOException if the operation has already ended or is closed
      *
+     * @throws IOException if the operation has already ended or is closed
      * @hide
      */
     public void close() throws IOException {
@@ -804,8 +837,8 @@ public final class ServerOperation implements Operation, BaseStream {
 
     /**
      * Verifies that the connection is open and no exceptions should be thrown.
-     * @throws IOException if an exception needs to be thrown
      *
+     * @throws IOException if an exception needs to be thrown
      * @hide
      */
     public void ensureOpen() throws IOException {
@@ -818,41 +851,35 @@ public final class ServerOperation implements Operation, BaseStream {
     }
 
     /**
-     * Verifies that additional information may be sent. In other words, the
-     * operation is not done.
-     * <P>
-     * Included to implement the BaseStream interface only. It does not do
-     * anything on the server side since the operation of the Operation object
-     * is not done until after the handler returns from its method.
-     * @throws IOException if the operation is completed
+     * Verifies that additional information may be sent. In other words, the operation is not done.
      *
+     * <p>Included to implement the BaseStream interface only. It does not do anything on the server
+     * side since the operation of the Operation object is not done until after the handler returns
+     * from its method.
+     *
+     * @throws IOException if the operation is completed
      * @hide
      */
-    public void ensureNotDone() throws IOException {
-    }
+    public void ensureNotDone() throws IOException {}
 
     /**
-     * Called when the output or input stream is closed. It does not do anything
-     * on the server side since the operation of the Operation object is not
-     * done until after the handler returns from its method.
-     * @param inStream <code>true</code> if the input stream is closed;
-     *        <code>false</code> if the output stream is closed
-     * @throws IOException if an IO error occurs
+     * Called when the output or input stream is closed. It does not do anything on the server side
+     * since the operation of the Operation object is not done until after the handler returns from
+     * its method.
      *
+     * @param inStream <code>true</code> if the input stream is closed; <code>false</code> if the
+     *     output stream is closed
+     * @throws IOException if an IO error occurs
      * @hide
      */
-    public void streamClosed(boolean inStream) throws IOException {
-
-    }
+    public void streamClosed(boolean inStream) throws IOException {}
 
     /** @hide */
-    public void noBodyHeader(){
+    public void noBodyHeader() {
         mSendBodyHeader = false;
     }
 
-    /**
-     * Returns whether the operation is aborted.
-     */
+    /** Returns whether the operation is aborted. */
     public boolean isAborted() {
         return mAborted;
     }
