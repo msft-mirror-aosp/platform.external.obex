@@ -38,7 +38,7 @@ import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
@@ -180,6 +180,7 @@ public final class ObexHelper {
      *     result will specify if a body or end of body is received
      * @throws IOException if an invalid header was found
      */
+    @SuppressWarnings("JavaUtilDate")
     public static byte[] updateHeaderSet(HeaderSet header, byte[] headerArray) throws IOException {
         int index = 0;
         int length = 0;
@@ -240,20 +241,23 @@ public final class ObexHelper {
                         }
                         switch (headerID) {
                             case HeaderSet.TYPE:
-                                try {
-                                    // Remove trailing null
-                                    if (trimTail == false) {
-                                        headerImpl.setHeader(
-                                                headerID,
-                                                new String(value, 0, value.length, "ISO8859_1"));
-                                    } else {
-                                        headerImpl.setHeader(
-                                                headerID,
-                                                new String(
-                                                        value, 0, value.length - 1, "ISO8859_1"));
-                                    }
-                                } catch (UnsupportedEncodingException e) {
-                                    throw e;
+                                // Remove trailing null
+                                if (trimTail == false) {
+                                    headerImpl.setHeader(
+                                            headerID,
+                                            new String(
+                                                    value,
+                                                    0,
+                                                    value.length,
+                                                    StandardCharsets.ISO_8859_1));
+                                } else {
+                                    headerImpl.setHeader(
+                                            headerID,
+                                            new String(
+                                                    value,
+                                                    0,
+                                                    value.length - 1,
+                                                    StandardCharsets.ISO_8859_1));
                                 }
                                 break;
 
@@ -278,35 +282,30 @@ public final class ObexHelper {
                                 break;
 
                             case HeaderSet.TIME_ISO_8601:
-                                try {
-                                    String dateString = new String(value, "ISO8859_1");
-                                    Calendar temp = Calendar.getInstance();
-                                    if ((dateString.length() == 16)
-                                            && (dateString.charAt(15) == 'Z')) {
-                                        temp.setTimeZone(TimeZone.getTimeZone("UTC"));
-                                    }
-                                    temp.set(
-                                            Calendar.YEAR,
-                                            Integer.parseInt(dateString.substring(0, 4)));
-                                    temp.set(
-                                            Calendar.MONTH,
-                                            Integer.parseInt(dateString.substring(4, 6)));
-                                    temp.set(
-                                            Calendar.DAY_OF_MONTH,
-                                            Integer.parseInt(dateString.substring(6, 8)));
-                                    temp.set(
-                                            Calendar.HOUR_OF_DAY,
-                                            Integer.parseInt(dateString.substring(9, 11)));
-                                    temp.set(
-                                            Calendar.MINUTE,
-                                            Integer.parseInt(dateString.substring(11, 13)));
-                                    temp.set(
-                                            Calendar.SECOND,
-                                            Integer.parseInt(dateString.substring(13, 15)));
-                                    headerImpl.setHeader(HeaderSet.TIME_ISO_8601, temp);
-                                } catch (UnsupportedEncodingException e) {
-                                    throw e;
+                                String dateString = new String(value, StandardCharsets.ISO_8859_1);
+                                Calendar temp = Calendar.getInstance();
+                                if ((dateString.length() == 16) && (dateString.charAt(15) == 'Z')) {
+                                    temp.setTimeZone(TimeZone.getTimeZone("UTC"));
                                 }
+                                temp.set(
+                                        Calendar.YEAR,
+                                        Integer.parseInt(dateString.substring(0, 4)));
+                                temp.set(
+                                        Calendar.MONTH,
+                                        Integer.parseInt(dateString.substring(4, 6)));
+                                temp.set(
+                                        Calendar.DAY_OF_MONTH,
+                                        Integer.parseInt(dateString.substring(6, 8)));
+                                temp.set(
+                                        Calendar.HOUR_OF_DAY,
+                                        Integer.parseInt(dateString.substring(9, 11)));
+                                temp.set(
+                                        Calendar.MINUTE,
+                                        Integer.parseInt(dateString.substring(11, 13)));
+                                temp.set(
+                                        Calendar.SECOND,
+                                        Integer.parseInt(dateString.substring(13, 15)));
+                                headerImpl.setHeader(HeaderSet.TIME_ISO_8601, temp);
                                 break;
 
                             default:
@@ -386,19 +385,18 @@ public final class ObexHelper {
      *     added to the array or <code>false</code> if it should not be nulled out
      * @return the header of an OBEX packet
      */
+    @SuppressWarnings("JavaUtilDate")
     public static byte[] createHeader(HeaderSet head, boolean nullOut) {
         Long intHeader = null;
         String stringHeader = null;
         Calendar dateHeader = null;
         Byte byteHeader = null;
-        StringBuffer buffer = null;
         byte[] value = null;
         byte[] result = null;
         byte[] lengthArray = new byte[2];
         int length;
-        HeaderSet headImpl = null;
+        HeaderSet headImpl = head;
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        headImpl = head;
 
         try {
             /*
@@ -447,11 +445,7 @@ public final class ObexHelper {
             stringHeader = (String) headImpl.getHeader(HeaderSet.TYPE);
             if (stringHeader != null) {
                 out.write((byte) HeaderSet.TYPE);
-                try {
-                    value = stringHeader.getBytes("ISO8859_1");
-                } catch (UnsupportedEncodingException e) {
-                    throw e;
-                }
+                value = stringHeader.getBytes(StandardCharsets.ISO_8859_1);
 
                 length = value.length + 4;
                 lengthArray[0] = (byte) (255 & (length >> 8));
@@ -483,7 +477,7 @@ public final class ObexHelper {
                  * The ISO Header should take the form YYYYMMDDTHHMMSSZ.  The
                  * 'Z' will only be included if it is a UTC time.
                  */
-                buffer = new StringBuffer();
+                StringBuilder buffer = new StringBuilder();
                 int temp = dateHeader.get(Calendar.YEAR);
                 for (int i = temp; i < 1000; i = i * 10) {
                     buffer.append("0");
@@ -520,11 +514,7 @@ public final class ObexHelper {
                     buffer.append("Z");
                 }
 
-                try {
-                    value = buffer.toString().getBytes("ISO8859_1");
-                } catch (UnsupportedEncodingException e) {
-                    throw e;
-                }
+                value = buffer.toString().getBytes(StandardCharsets.ISO_8859_1);
 
                 length = value.length + 3;
                 lengthArray[0] = (byte) (255 & (length >> 8));
@@ -746,13 +736,14 @@ public final class ObexHelper {
                     headImpl.setHeader(HeaderSet.SINGLE_RESPONSE_MODE_PARAMETER, null);
                 }
             }
-
         } catch (IOException e) {
+            // Impossible in a ByteArrayOutputStream
         } finally {
             result = out.toByteArray();
             try {
                 out.close();
             } catch (Exception ex) {
+                // Preventing exception propagation during closing
             }
         }
 
@@ -1065,7 +1056,8 @@ public final class ObexHelper {
             authChall[21] = 0x02;
             authChall[22] = (byte) (realm.length() + 1);
             authChall[23] = 0x01; // ISO 8859-1 Encoding
-            System.arraycopy(realm.getBytes("ISO8859_1"), 0, authChall, 24, realm.length());
+            System.arraycopy(
+                    realm.getBytes(StandardCharsets.ISO_8859_1), 0, authChall, 24, realm.length());
         }
 
         // Include the nonce field in the header
@@ -1103,7 +1095,6 @@ public final class ObexHelper {
     /**
      * Return the maximum allowed OBEX packet to receive - used in OBEX connect.
      *
-     * @param transport
      * @return the maximum allowed OBEX packet to receive
      */
     public static int getMaxRxPacketSize(ObexTransport transport) {
