@@ -35,10 +35,7 @@ package com.android.obex;
 import java.io.IOException;
 import java.io.InputStream;
 
-/**
- * This object provides an input stream to the Operation objects used in this
- * package.
- */
+/** This object provides an input stream to the Operation objects used in this package. */
 public final class PrivateInputStream extends InputStream {
 
     private BaseStream mParent;
@@ -51,6 +48,7 @@ public final class PrivateInputStream extends InputStream {
 
     /**
      * Creates an input stream for the <code>Operation</code> to read from
+     *
      * @param p the connection this input stream is for
      */
     public PrivateInputStream(BaseStream p) {
@@ -61,12 +59,11 @@ public final class PrivateInputStream extends InputStream {
     }
 
     /**
-     * Returns the number of bytes that can be read (or skipped over) from this
-     * input stream without blocking by the next caller of a method for this
-     * input stream. The next caller might be the same thread or or another
-     * thread.
-     * @return the number of bytes that can be read from this input stream
-     *         without blocking
+     * Returns the number of bytes that can be read (or skipped over) from this input stream without
+     * blocking by the next caller of a method for this input stream. The next caller might be the
+     * same thread or or another thread.
+     *
+     * @return the number of bytes that can be read from this input stream without blocking
      * @throws IOException if an I/O error occurs
      */
     @Override
@@ -76,13 +73,12 @@ public final class PrivateInputStream extends InputStream {
     }
 
     /**
-     * Reads the next byte of data from the input stream. The value byte is
-     * returned as an int in the range 0 to 255. If no byte is available because
-     * the end of the stream has been reached, the value -1 is returned. This
-     * method blocks until input data is available, the end of the stream is
-     * detected, or an exception is thrown.
-     * @return the byte read from the input stream or -1 if it reaches the end of
-     *         stream
+     * Reads the next byte of data from the input stream. The value byte is returned as an int in
+     * the range 0 to 255. If no byte is available because the end of the stream has been reached,
+     * the value -1 is returned. This method blocks until input data is available, the end of the
+     * stream is detected, or an exception is thrown.
+     *
+     * @return the byte read from the input stream or -1 if it reaches the end of stream
      * @throws IOException if an I/O error occurs
      */
     @Override
@@ -138,8 +134,8 @@ public final class PrivateInputStream extends InputStream {
     }
 
     /**
-     * Allows the <code>OperationImpl</code> thread to add body data to the
-     * input stream.
+     * Allows the <code>OperationImpl</code> thread to add body data to the input stream.
+     *
      * @param body the data to add to the stream
      * @param start the start of the body to array to copy
      */
@@ -158,6 +154,7 @@ public final class PrivateInputStream extends InputStream {
 
     /**
      * Verifies that this stream is open
+     *
      * @throws IOException if the stream is not open
      */
     private void ensureOpen() throws IOException {
@@ -168,8 +165,8 @@ public final class PrivateInputStream extends InputStream {
     }
 
     /**
-     * Closes the input stream. If the input stream is already closed, do
-     * nothing.
+     * Closes the input stream. If the input stream is already closed, do nothing.
+     *
      * @throws IOException this will never happen
      */
     @Override
