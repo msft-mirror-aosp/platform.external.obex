@@ -32,6 +32,7 @@ public class ObexPacket {
 
     /**
      * Create a complete OBEX packet by reading data from an InputStream.
+     *
      * @param is the input stream to read from.
      * @return the OBEX packet read.
      * @throws IOException if an IO exception occurs during read.
@@ -43,10 +44,10 @@ public class ObexPacket {
 
     /**
      * Read the remainder of an OBEX packet, with a specified headerId.
+     *
      * @param headerId the headerId already read from the stream.
      * @param is the stream to read from, assuming 1 byte have already been read.
      * @return the OBEX packet read.
-     * @throws IOException
      */
     public static ObexPacket read(int headerId, InputStream is) throws IOException {
         // Read the 2 byte length field from the stream
