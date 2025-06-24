@@ -365,6 +365,9 @@ public final class ObexHelper {
                         }
                         index += 4;
                         break;
+
+                    default:
+                        break; // Unknown header, skipping
                 }
             }
         } catch (IOException e) {
@@ -804,12 +807,13 @@ public final class ObexHelper {
                     index += 5;
                     fullLength += 5;
                     break;
+
+                default:
+                    break; // Unknown header, skipping
             }
         }
 
-        /*
-         * Determine if this is the last header or not
-         */
+        // Determine if this is the last header or not
         if (lastLength == 0) {
             /*
              * Since this is the last header, check to see if the size of this
