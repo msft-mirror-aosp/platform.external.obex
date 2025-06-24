@@ -32,6 +32,10 @@
 
 package com.android.obex;
 
+import static com.android.obex.ObexHelper.OBEX_AUTH_REALM_CHARSET_ASCII;
+import static com.android.obex.ObexHelper.OBEX_AUTH_REALM_CHARSET_ISO_8859_1;
+import static com.android.obex.ObexHelper.OBEX_AUTH_REALM_CHARSET_UNICODE;
+
 import android.util.Log;
 
 import java.io.IOException;
@@ -86,22 +90,14 @@ public class ObexSession {
             byte[] realmString = new byte[description.length - 1];
             System.arraycopy(description, 1, realmString, 0, realmString.length);
 
-            switch (description[0] & 0xFF) {
-                case ObexHelper.OBEX_AUTH_REALM_CHARSET_ASCII:
-                // ASCII encoding
-                // Fall through
-                case ObexHelper.OBEX_AUTH_REALM_CHARSET_ISO_8859_1:
-                    realm = new String(realmString, StandardCharsets.ISO_8859_1);
-                    break;
-
-                case ObexHelper.OBEX_AUTH_REALM_CHARSET_UNICODE:
-                    // UNICODE Encoding
-                    realm = ObexHelper.convertToUnicode(realmString, false);
-                    break;
-
-                default:
-                    throw new IOException("Unsupported Encoding Scheme");
-            }
+            realm =
+                    switch (description[0] & 0xFF) {
+                        case OBEX_AUTH_REALM_CHARSET_ASCII, OBEX_AUTH_REALM_CHARSET_ISO_8859_1 ->
+                                new String(realmString, StandardCharsets.ISO_8859_1);
+                        case OBEX_AUTH_REALM_CHARSET_UNICODE ->
+                                ObexHelper.convertToUnicode(realmString, false);
+                        default -> throw new IOException("Unsupported Encoding Scheme");
+                    };
         }
 
         boolean isUserIDRequired = false;
@@ -127,9 +123,7 @@ public class ObexSession {
             return false;
         }
 
-        /*
-         * If no password is provided then we not resent the request
-         */
+        // If no password is provided then we not resent the request
         if (result == null) {
             return false;
         }
