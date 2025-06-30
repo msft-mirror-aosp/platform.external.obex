@@ -111,7 +111,7 @@ java_library {
             "-Xep:ReturnAtTheEndOfVoidFunction:ERROR",
             "-Xep:ReturnFromVoid:ERROR",
             "-Xep:SelfAssertion:ERROR",
-            "-Xep:StatementSwitchToExpressionSwitch:ERROR",
+            // "-Xep:StatementSwitchToExpressionSwitch:ERROR", // new findings in errorprone 2.39.0
             "-Xep:StaticAssignmentInConstructor:ERROR",
             "-Xep:StaticGuardedByInstance:ERROR",
             "-Xep:StringCaseLocaleUsage:ERROR",
