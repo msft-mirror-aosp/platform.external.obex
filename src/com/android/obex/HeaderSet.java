@@ -295,10 +295,8 @@ public final class HeaderSet {
      *     correct Java type as defined in the description of this interface\
      */
     public void setHeader(int headerID, Object headerValue) {
-        long temp = -1;
-
         switch (headerID) {
-            case COUNT:
+            case COUNT -> {
                 if (!(headerValue instanceof Long)) {
                     if (headerValue == null) {
                         mCount = null;
@@ -306,26 +304,26 @@ public final class HeaderSet {
                     }
                     throw new IllegalArgumentException("Count must be a Long");
                 }
-                temp = ((Long) headerValue).longValue();
+                long temp = ((Long) headerValue).longValue();
                 if ((temp < 0L) || (temp > 0xFFFFFFFFL)) {
                     throw new IllegalArgumentException("Count must be between 0 and 0xFFFFFFFF");
                 }
                 mCount = (Long) headerValue;
-                break;
-            case NAME:
+            }
+            case NAME -> {
                 if ((headerValue != null) && (!(headerValue instanceof String))) {
                     throw new IllegalArgumentException("Name must be a String");
                 }
                 mEmptyName = false;
                 mName = (String) headerValue;
-                break;
-            case TYPE:
+            }
+            case TYPE -> {
                 if ((headerValue != null) && (!(headerValue instanceof String))) {
                     throw new IllegalArgumentException("Type must be a String");
                 }
                 mType = (String) headerValue;
-                break;
-            case LENGTH:
+            }
+            case LENGTH -> {
                 if (!(headerValue instanceof Long)) {
                     if (headerValue == null) {
                         mLength = null;
@@ -333,31 +331,31 @@ public final class HeaderSet {
                     }
                     throw new IllegalArgumentException("Length must be a Long");
                 }
-                temp = ((Long) headerValue).longValue();
+                long temp = ((Long) headerValue).longValue();
                 if ((temp < 0L) || (temp > 0xFFFFFFFFL)) {
                     throw new IllegalArgumentException("Length must be between 0 and 0xFFFFFFFF");
                 }
                 mLength = (Long) headerValue;
-                break;
-            case TIME_ISO_8601:
+            }
+            case TIME_ISO_8601 -> {
                 if ((headerValue != null) && (!(headerValue instanceof Calendar))) {
                     throw new IllegalArgumentException("Time ISO 8601 must be a Calendar");
                 }
                 mIsoTime = (Calendar) headerValue;
-                break;
-            case TIME_4_BYTE:
+            }
+            case TIME_4_BYTE -> {
                 if ((headerValue != null) && (!(headerValue instanceof Calendar))) {
                     throw new IllegalArgumentException("Time 4 Byte must be a Calendar");
                 }
                 mByteTime = (Calendar) headerValue;
-                break;
-            case DESCRIPTION:
+            }
+            case DESCRIPTION -> {
                 if ((headerValue != null) && (!(headerValue instanceof String))) {
                     throw new IllegalArgumentException("Description must be a String");
                 }
                 mDescription = (String) headerValue;
-                break;
-            case TARGET:
+            }
+            case TARGET -> {
                 if (headerValue == null) {
                     mTarget = null;
                 } else {
@@ -368,8 +366,8 @@ public final class HeaderSet {
                         System.arraycopy(headerValue, 0, mTarget, 0, mTarget.length);
                     }
                 }
-                break;
-            case HTTP:
+            }
+            case HTTP -> {
                 if (headerValue == null) {
                     mHttpHeader = null;
                 } else {
@@ -380,8 +378,8 @@ public final class HeaderSet {
                         System.arraycopy(headerValue, 0, mHttpHeader, 0, mHttpHeader.length);
                     }
                 }
-                break;
-            case WHO:
+            }
+            case WHO -> {
                 if (headerValue == null) {
                     mWho = null;
                 } else {
@@ -392,8 +390,8 @@ public final class HeaderSet {
                         System.arraycopy(headerValue, 0, mWho, 0, mWho.length);
                     }
                 }
-                break;
-            case OBJECT_CLASS:
+            }
+            case OBJECT_CLASS -> {
                 if (headerValue == null) {
                     mObjectClass = null;
                 } else {
@@ -404,8 +402,8 @@ public final class HeaderSet {
                         System.arraycopy(headerValue, 0, mObjectClass, 0, mObjectClass.length);
                     }
                 }
-                break;
-            case APPLICATION_PARAMETER:
+            }
+            case APPLICATION_PARAMETER -> {
                 if (headerValue == null) {
                     mAppParam = null;
                 } else {
@@ -417,8 +415,8 @@ public final class HeaderSet {
                         System.arraycopy(headerValue, 0, mAppParam, 0, mAppParam.length);
                     }
                 }
-                break;
-            case SINGLE_RESPONSE_MODE:
+            }
+            case SINGLE_RESPONSE_MODE -> {
                 if (headerValue == null) {
                     mSingleResponseMode = null;
                 } else {
@@ -428,8 +426,8 @@ public final class HeaderSet {
                         mSingleResponseMode = (Byte) headerValue;
                     }
                 }
-                break;
-            case SINGLE_RESPONSE_MODE_PARAMETER:
+            }
+            case SINGLE_RESPONSE_MODE_PARAMETER -> {
                 if (headerValue == null) {
                     mSrmParam = null;
                 } else {
@@ -440,8 +438,8 @@ public final class HeaderSet {
                         mSrmParam = (Byte) headerValue;
                     }
                 }
-                break;
-            default:
+            }
+            default -> {
                 // Verify that it was not a Unicode String user Defined
                 if ((headerID >= 0x30) && (headerID <= 0x3F)) {
                     if ((headerValue != null) && (!(headerValue instanceof String))) {
@@ -493,7 +491,7 @@ public final class HeaderSet {
                         }
                         throw new IllegalArgumentException("Integer User Defined must be a Long");
                     }
-                    temp = ((Long) headerValue).longValue();
+                    long temp = ((Long) headerValue).longValue();
                     if ((temp < 0L) || (temp > 0xFFFFFFFFL)) {
                         throw new IllegalArgumentException(
                                 "Integer User Defined must be between 0 and 0xFFFFFFFF");
@@ -502,6 +500,7 @@ public final class HeaderSet {
                     break;
                 }
                 throw new IllegalArgumentException("Invalid Header Identifier: " + headerID);
+            }
         }
     }
 
@@ -516,56 +515,42 @@ public final class HeaderSet {
      *     interface or any of the user-defined headers
      */
     public Object getHeader(int headerID) {
-        switch (headerID) {
-            case COUNT:
-                return mCount;
-            case NAME:
-                return mName;
-            case TYPE:
-                return mType;
-            case LENGTH:
-                return mLength;
-            case TIME_ISO_8601:
-                return mIsoTime;
-            case TIME_4_BYTE:
-                return mByteTime;
-            case DESCRIPTION:
-                return mDescription;
-            case TARGET:
-                return mTarget;
-            case HTTP:
-                return mHttpHeader;
-            case WHO:
-                return mWho;
-            case CONNECTION_ID:
-                return mConnectionID;
-            case OBJECT_CLASS:
-                return mObjectClass;
-            case APPLICATION_PARAMETER:
-                return mAppParam;
-            case SINGLE_RESPONSE_MODE:
-                return mSingleResponseMode;
-            case SINGLE_RESPONSE_MODE_PARAMETER:
-                return mSrmParam;
-            default:
+        return switch (headerID) {
+            case COUNT -> mCount;
+            case NAME -> mName;
+            case TYPE -> mType;
+            case LENGTH -> mLength;
+            case TIME_ISO_8601 -> mIsoTime;
+            case TIME_4_BYTE -> mByteTime;
+            case DESCRIPTION -> mDescription;
+            case TARGET -> mTarget;
+            case HTTP -> mHttpHeader;
+            case WHO -> mWho;
+            case CONNECTION_ID -> mConnectionID;
+            case OBJECT_CLASS -> mObjectClass;
+            case APPLICATION_PARAMETER -> mAppParam;
+            case SINGLE_RESPONSE_MODE -> mSingleResponseMode;
+            case SINGLE_RESPONSE_MODE_PARAMETER -> mSrmParam;
+            default -> {
                 // Verify that it was not a Unicode String user Defined
                 if ((headerID >= 0x30) && (headerID <= 0x3F)) {
-                    return mUnicodeUserDefined[headerID - 0x30];
+                    yield mUnicodeUserDefined[headerID - 0x30];
                 }
                 // Verify that it was not a byte sequence user defined header
                 if ((headerID >= 0x70) && (headerID <= 0x7F)) {
-                    return mSequenceUserDefined[headerID - 0x70];
+                    yield mSequenceUserDefined[headerID - 0x70];
                 }
                 // Verify that it was not a byte user defined header
                 if ((headerID >= 0xB0) && (headerID <= 0xBF)) {
-                    return mByteUserDefined[headerID - 0xB0];
+                    yield mByteUserDefined[headerID - 0xB0];
                 }
                 // Verify that it was not a integer user defined header
                 if ((headerID >= 0xF0) && (headerID <= 0xFF)) {
-                    return mIntegerUserDefined[headerID - 0xF0];
+                    yield mIntegerUserDefined[headerID - 0xF0];
                 }
                 throw new IllegalArgumentException("Invalid Header Identifier: " + headerID);
-        }
+            }
+        };
     }
 
     /**

@@ -196,14 +196,11 @@ public final class ObexHelper {
                     /*
                      * 0x00 is a unicode null terminate string with the first
                      * two bytes after the header identifier being the length
-                     */
-                    case 0x00:
-                    // Fall through
-                    /*
+                     *
                      * 0x40 is a byte sequence with the first
                      * two bytes after the header identifier being the length
                      */
-                    case 0x40:
+                    case 0x00, 0x40 -> {
                         boolean trimTail = true;
                         index++;
                         length =
@@ -318,13 +315,13 @@ public final class ObexHelper {
                         }
 
                         index += length;
-                        break;
+                    }
 
                     /*
                      * 0x80 is a byte header.  The only valid byte headers are
                      * the 16 user defined byte headers.
                      */
-                    case 0x80:
+                    case 0x80 -> {
                         index++;
                         try {
                             headerImpl.setHeader(headerID, Byte.valueOf(headerArray[index]));
@@ -332,14 +329,14 @@ public final class ObexHelper {
                             // Not a valid header so ignore
                         }
                         index++;
-                        break;
+                    }
 
                     /*
                      * 0xC0 is a 4 byte unsigned integer header and with the
                      * exception of TIME_4_BYTE will be converted to a Long
                      * and added.
                      */
-                    case 0xC0:
+                    case 0xC0 -> {
                         index++;
                         value = new byte[4];
                         System.arraycopy(headerArray, index, value, 0, 4);
@@ -364,10 +361,9 @@ public final class ObexHelper {
                             throw new IOException("Header was not formatted properly", e);
                         }
                         index += 4;
-                        break;
+                    }
 
-                    default:
-                        break; // Unknown header, skipping
+                    default -> {} // Unknown header, skipping
                 }
             }
         } catch (IOException e) {
@@ -777,9 +773,7 @@ public final class ObexHelper {
             lastLength = fullLength;
 
             switch (headerID & (0xC0)) {
-                case 0x00:
-                // Fall through
-                case 0x40:
+                case 0x00, 0x40 -> {
                     index++;
                     length =
                             (headerArray[index] < 0
@@ -795,21 +789,20 @@ public final class ObexHelper {
                     index++;
                     index += length;
                     fullLength += length + 3;
-                    break;
+                }
 
-                case 0x80:
+                case 0x80 -> {
                     index++;
                     index++;
                     fullLength += 2;
-                    break;
+                }
 
-                case 0xC0:
+                case 0xC0 -> {
                     index += 5;
                     fullLength += 5;
-                    break;
+                }
 
-                default:
-                    break; // Unknown header, skipping
+                default -> {} // Unknown header, skipping
             }
         }
 

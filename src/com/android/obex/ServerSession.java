@@ -96,37 +96,16 @@ public final class ServerSession extends ObexSession implements Runnable {
                 int requestType = mInput.read();
                 if (V) Log.v(TAG, "Read request: " + requestType);
                 switch (requestType) {
-                    case ObexHelper.OBEX_OPCODE_CONNECT:
-                        handleConnectRequest();
-                        break;
-
-                    case ObexHelper.OBEX_OPCODE_DISCONNECT:
-                        handleDisconnectRequest();
-                        break;
-
-                    case ObexHelper.OBEX_OPCODE_GET:
-                    case ObexHelper.OBEX_OPCODE_GET_FINAL:
-                        handleGetRequest(requestType);
-                        break;
-
-                    case ObexHelper.OBEX_OPCODE_PUT:
-                    case ObexHelper.OBEX_OPCODE_PUT_FINAL:
-                        handlePutRequest(requestType);
-                        break;
-
-                    case ObexHelper.OBEX_OPCODE_SETPATH:
-                        handleSetPathRequest();
-                        break;
-                    case ObexHelper.OBEX_OPCODE_ABORT:
-                        handleAbortRequest();
-                        break;
-
-                    case -1:
-                        done = true;
-                        break;
-
-                    default:
-
+                    case ObexHelper.OBEX_OPCODE_CONNECT -> handleConnectRequest();
+                    case ObexHelper.OBEX_OPCODE_DISCONNECT -> handleDisconnectRequest();
+                    case ObexHelper.OBEX_OPCODE_GET, ObexHelper.OBEX_OPCODE_GET_FINAL ->
+                            handleGetRequest(requestType);
+                    case ObexHelper.OBEX_OPCODE_PUT, ObexHelper.OBEX_OPCODE_PUT_FINAL ->
+                            handlePutRequest(requestType);
+                    case ObexHelper.OBEX_OPCODE_SETPATH -> handleSetPathRequest();
+                    case ObexHelper.OBEX_OPCODE_ABORT -> handleAbortRequest();
+                    case -1 -> done = true;
+                    default -> {
                         /*
                          * Received a request type that is not recognized so I am
                          * just going to read the packet and send a not implemented
@@ -138,6 +117,7 @@ public final class ServerSession extends ObexSession implements Runnable {
                             mInput.read();
                         }
                         sendResponse(ResponseCodes.OBEX_HTTP_NOT_IMPLEMENTED, null);
+                    }
                 }
             }
 
