@@ -565,8 +565,11 @@ public final class ClientSession extends ObexSession {
 
                     if (length > 7) {
                         data = new byte[length - 7];
-
                         bytesReceived = mInput.read(data);
+                        if (bytesReceived < 0) {
+                            throw new IOException("input stream closed");
+                        }
+
                         while (bytesReceived != (length - 7)) {
                             bytesReceived +=
                                     mInput.read(data, bytesReceived, data.length - bytesReceived);
@@ -577,6 +580,9 @@ public final class ClientSession extends ObexSession {
                 } else {
                     data = new byte[length - 3];
                     bytesReceived = mInput.read(data);
+                    if (bytesReceived < 0) {
+                        throw new IOException("input stream closed");
+                    }
 
                     while (bytesReceived != (length - 3)) {
                         bytesReceived +=
