@@ -307,8 +307,12 @@ public final class ObexHelper {
 
                             default:
                                 if ((headerID & 0xC0) == 0x00) {
-                                    headerImpl.setHeader(
-                                            headerID, ObexHelper.convertToUnicode(value, true));
+                                    try {
+                                        headerImpl.setHeader(
+                                                headerID, ObexHelper.convertToUnicode(value, true));
+                                    } catch (IllegalArgumentException e) {
+                                        Log.w(TAG, "Invalid unicode headerId=" + headerID);
+                                    }
                                 } else {
                                     headerImpl.setHeader(headerID, value);
                                 }
